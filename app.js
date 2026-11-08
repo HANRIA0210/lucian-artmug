@@ -37,7 +37,7 @@
     C.works.forEach(function (w) {
       var f = document.createElement('figure');
       var img = document.createElement('img');
-      img.src = w.src; img.alt = w.title || '작업물'; img.loading = 'lazy';
+      img.src = w.src; img.alt = w.title || '작업물';
       img.addEventListener('load', postHeight);
       f.appendChild(img);
       if (w.title) { var c = document.createElement('figcaption'); c.textContent = w.title; f.appendChild(c); }
@@ -159,7 +159,7 @@
       e.preventDefault();
       if (inFrame) {
         var top = target.getBoundingClientRect().top + (window.scrollY || 0);
-        window.parent.postMessage({ source: SOURCE, type: 'scrollTo', top: top }, '*');
+        window.parent.postMessage({ source: SOURCE, type: 'scrollTo', top: top - 80 }, '*');
       } else {
         target.scrollIntoView({ behavior: 'smooth' });
       }
@@ -179,6 +179,20 @@
   window.addEventListener('load', postHeight);
   $$('details').forEach(function (d) { d.addEventListener('toggle', postHeight); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(postHeight);
+
+  /* ── 상단 메뉴 따라오기 (아트머그 iframe 안: 부모가 알려주는 스크롤 위치로 이동) ── */
+  if (inFrame) {
+    var nav = $('#nav');
+    window.addEventListener('message', function (e) {
+      if (e.source !== window.parent) return;
+      var d = e.data || {};
+      if (d.source !== 'lucian-artmug-parent' || d.type !== 'viewport') return;
+      var pageH = $('.page').getBoundingClientRect().height;
+      var y = Math.max(0, Math.min(-Number(d.iframeTop || 0), pageH - 120));
+      nav.style.transform = 'translateY(' + y + 'px)';
+    });
+    window.parent.postMessage({ source: SOURCE, type: 'ready' }, '*');
+  }
 
   applyPreview();
   render();

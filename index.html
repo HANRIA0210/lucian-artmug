@@ -7,13 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="style.css?v=1">
+<link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 <div class="page">
 
   <!-- NAV -->
-  <nav class="nav">
+  <div class="nav-wrap"><nav class="nav" id="nav">
     <a class="brand" href="#top" data-go="top"><span class="moon"></span>Lucian</a>
     <div class="nav-links">
       <a href="#preview" data-go="preview">미리보기</a>
@@ -22,12 +22,12 @@
       <a href="#works" data-go="works">작업물</a>
     </div>
     <a class="nav-cta" href="#form" data-go="form">신청 양식</a>
-  </nav>
+  </nav></div>
 
   <!-- HERO -->
   <header class="hero" id="top">
     <div class="stars" aria-hidden="true"></div>
-    <p class="eyebrow">CUSTOM CHAT CSS · CHZZK · SOOP</p>
+    <p class="eyebrow">CUSTOM CHAT CSS</p>
     <h1>방송 화면에 어울리는<br><em>나만의 채팅창</em></h1>
     <p class="lead">위플랩 커스텀 CSS로 바로 쓰는 채팅창을 만들어 드려요.<br>방송 컨셉과 색에 맞춰 하나하나 디자인합니다.</p>
     <div class="hero-btns">
@@ -37,6 +37,17 @@
     <ul class="chips">
       <li>위플랩 커스텀 CSS</li><li>치지직</li><li>SOOP</li><li>수정 2회</li><li>설치법 안내</li>
     </ul>
+    <div class="slots">
+      <div class="slot-card">
+        <p class="slot-tag">운영 슬롯</p>
+        <div class="dots" id="slotNormal"></div>
+      </div>
+      <div class="slot-card">
+        <p class="slot-tag">빠른 마감 슬롯</p>
+        <div class="dots" id="slotFast"></div>
+      </div>
+      <p class="slot-legend"><span class="dot"></span> 비었음 &nbsp;&nbsp; <span class="dot full"></span> 진행중</p>
+    </div>
   </header>
 
   <!-- ALERT -->
@@ -119,7 +130,7 @@
     <div class="price-grid">
       <div class="card price-main">
         <p class="card-tag">기본 가격</p>
-        <p class="won"><span id="basePrice">180,000</span>원</p>
+        <p class="won"><span id="basePrice">210,000</span>원</p>
         <ul class="incl">
           <li>위플랩 커스텀 CSS</li>
           <li>CSS 전달 전 디자인 수정 2회</li>
@@ -134,18 +145,6 @@
         <p class="muted">정확한 금액은 문의 후 견적으로 안내드려요.</p>
       </div>
     </div>
-
-    <div class="slots">
-      <div class="card slot-card">
-        <p class="card-tag">운영 슬롯</p>
-        <div class="dots" id="slotNormal"></div>
-      </div>
-      <div class="card slot-card">
-        <p class="card-tag">빠른 마감 슬롯</p>
-        <div class="dots" id="slotFast"></div>
-      </div>
-      <p class="slot-legend"><span class="dot"></span> 비었음 &nbsp;&nbsp; <span class="dot full"></span> 진행중</p>
-    </div>
   </section>
 
   <!-- PROCESS -->
@@ -156,10 +155,10 @@
     </div>
     <ol class="steps">
       <li><b>문의</b><span>신청 양식을 복사해 아트머그 문의로 보내주세요.</span></li>
-      <li><b>견적 · 입금</b><span>견적 안내 후 결제해 주세요. 문의순이 아닌 <em>입금순</em>으로 진행돼요.</span></li>
+      <li><b>견적 · 입금</b><span>문의 후 견적 안내를 받으시고 결제를 진행해 주세요. 문의순이 아닌 <em>입금순</em>으로 진행돼요.</span></li>
       <li><b>디자인 · 수정</b><span>CSS 전달 전까지 디자인 수정 2회 가능해요.</span></li>
       <li><b>CSS 전달</b><span>완성 CSS와 설치법을 함께 보내드려요.</span></li>
-      <li><b>오류 대응</b><span>약 2주 동안 오류 제보를 받고, 이후 오픈카톡방은 정리해요.</span></li>
+      <li><b>오류 대응</b><span>한 달 동안 오류 제보를 받고, 그 이후에는 파일을 정리하기 때문에 수정이 어려워요.</span></li>
     </ol>
   </section>
 
@@ -185,8 +184,8 @@
         <p>입금한 날짜로부터 <b>15일 마감</b>이에요. 짧은 기간에 신청이 몰리면 입금 순서대로 진행하며 마감기한이 변동될 수 있어요. 빠른 마감은 추가금이 있어요.</p>
       </details>
       <details>
-        <summary>오류 대응 · 오픈카톡방</summary>
-        <p>일정 기간(약 2주)이 지난 후 오류에 대한 제보가 없다고 판단되면 의뢰를 진행하신 오픈카톡방은 삭제합니다.</p>
+        <summary>오류 대응</summary>
+        <p>한 달이 지난 후 오류에 대한 제보가 없다고 판단되면 추가적인 수정은 진행해 드리기 어려워요.</p>
       </details>
       <details>
         <summary>제작 기본 사항</summary>
@@ -256,7 +255,7 @@
   <footer class="foot">© Lucian · 채팅창 CSS 주문제작</footer>
 </div>
 
-<script src="config.js?v=1"></script>
-<script src="app.js?v=1"></script>
+<script src="config.js?v=2"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>

@@ -1,15 +1,17 @@
 /*
  * 아트머그 상품 페이지(부모)에서 도는 스크립트.
- * 아트머그 작가 설정의 "커스텀 메뉴" 칸(PC · 모바일)에 <script src="...">로 넣어요.
+ * 아트머그 작품 수정 화면의 "커스텀 메뉴" 칸(PC · 모바일)에 <script src="...">로 넣어요.
  *  - 상세설명 「내용 더 보기」 접힘을 풀어요.
  *  - 루시안 페이지(iframe)가 알려주는 높이에 맞춰 iframe 크기를 바꿔요.
  *  - iframe 안의 메뉴를 누르면 아트머그 페이지를 그 위치로 스크롤해요.
+ *  - 스크롤 위치를 iframe에 알려서 상단 메뉴가 화면 위를 따라오게 해요.
  */
 (function () {
   if (window.__lucianArtmug) return;
   window.__lucianArtmug = true;
 
   var SOURCE = 'lucian-artmug';
+  var PARENT_SOURCE = 'lucian-artmug-parent';
   var MIN_HEIGHT = 700;
 
   function getIframe() { return document.querySelector('[name="lucian-root"] iframe'); }
@@ -35,6 +37,16 @@
     });
   }
 
+  function sendViewport() {
+    var iframe = getIframe();
+    if (!iframe || !iframe.contentWindow) return;
+    var r = iframe.getBoundingClientRect();
+    iframe.contentWindow.postMessage({
+      source: PARENT_SOURCE, type: 'viewport',
+      iframeTop: r.top, viewportHeight: window.innerHeight
+    }, '*');
+  }
+
   window.addEventListener('message', function (e) {
     var iframe = getIframe();
     if (!iframe || e.source !== iframe.contentWindow) return;
@@ -44,13 +56,25 @@
       var h = Math.max(MIN_HEIGHT, Math.ceil(Number(d.height) || 0));
       iframe.style.height = h + 'px';
       iframe.setAttribute('height', h);
+      sendViewport();
     } else if (d.type === 'scrollTo') {
-      var y = (window.scrollY || 0) + iframe.getBoundingClientRect().top + Number(d.top || 0) - 12;
+      var y = (window.scrollY || 0) + iframe.getBoundingClientRect().top + Number(d.top || 0);
       window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    } else if (d.type === 'ready') {
+      [50, 300, 1000].forEach(function (ms) { setTimeout(sendViewport, ms); });
     }
   });
 
-  function init() { injectStyle(); unlockDetail(); }
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () { ticking = false; sendViewport(); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+
+  function init() { injectStyle(); unlockDetail(); sendViewport(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
   setTimeout(unlockDetail, 800);
