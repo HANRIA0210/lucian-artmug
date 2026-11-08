@@ -1,5 +1,5 @@
-(function () {
-  var C = window.LUCIAN || {};
+function lucianStart(C) {
+  C = C || {};
   var SOURCE = 'lucian-artmug';
   var inFrame = window.self !== window.top;
   if (!inFrame) document.documentElement.classList.add('standalone');
@@ -10,16 +10,6 @@
 
   /* ── 설정 반영 ── */
   if (C.basePrice) $('#basePrice').textContent = won(C.basePrice);
-
-  var addons = $('#addons');
-  (C.addons || []).forEach(function (a) {
-    var li = document.createElement('li');
-    var p = typeof a.price === 'number' ? '+' + won(a.price) + '원' : (a.price || '견적 문의');
-    li.innerHTML = '<span></span><span></span>';
-    li.children[0].textContent = a.name;
-    li.children[1].textContent = p;
-    addons.appendChild(li);
-  });
 
   function drawSlots(el, arr) {
     (arr || []).forEach(function (full) {
@@ -32,16 +22,77 @@
   drawSlots($('#slotNormal'), C.slots && C.slots.normal);
   drawSlots($('#slotFast'), C.slots && C.slots.fast);
 
+  /* ── 문구 영역 (data.json) ── */
+  var list = function (arr) { return Array.isArray(arr) ? arr : []; };
+  var paras = function (t) { return String(t || '').split('\n').map(function (p) { return '<p>' + p + '</p>'; }).join(''); };
+  $('#alert').innerHTML = list(C.alert).map(function (t) { return '<p>' + t + '</p>'; }).join('');
+  if (!list(C.alert).length) $('#alert').style.display = 'none';
+  $('#included').innerHTML = list(C.included).map(function (t) { return '<li>' + t + '</li>'; }).join('');
+  $('#basics').innerHTML = list(C.basics).map(function (t, i) { return '<li><span>' + (i + 1) + '</span>' + t + '</li>'; }).join('');
+  $('#steps').innerHTML = list(C.process).map(function (p) { return '<li><b>' + p.title + '</b><span>' + p.text + '</span></li>'; }).join('');
+  $('#notices').innerHTML = list(C.notices).map(function (n, i) {
+    return '<details' + (i === 0 ? ' open' : '') + '><summary>' + n.title + '</summary>' + paras(n.text) + '</details>';
+  }).join('');
+
   var works = $('#worksList');
   if (C.works && C.works.length) {
     C.works.forEach(function (w) {
       var f = document.createElement('figure');
+      var box = document.createElement('div');
+      box.className = 'work-box';
       var img = document.createElement('img');
       img.src = w.src; img.alt = w.title || '작업물';
       img.addEventListener('load', postHeight);
-      f.appendChild(img);
+      box.appendChild(img);
+      if (w.gif) {
+        var anim = document.createElement('img');
+        anim.className = 'work-gif'; anim.alt = '';
+        anim.addEventListener('load', function () { if (f.classList.contains('on')) anim.classList.add('ready'); });
+        box.appendChild(anim);
+        var hint = document.createElement('span');
+        hint.className = 'work-play'; hint.textContent = '▶';
+        box.appendChild(hint);
+        f.__gif = { el: anim, src: w.gif };
+      }
+      f.appendChild(box);
       if (w.title) { var c = document.createElement('figcaption'); c.textContent = w.title; f.appendChild(c); }
       works.appendChild(f);
+    });
+
+    /* 마우스를 올리면(모바일은 터치) 크게 + GIF 재생 */
+    var setOrigin = function (f) {
+      var wr = works.getBoundingClientRect(), r = f.getBoundingClientRect();
+      var cx = (r.left + r.width / 2 - wr.left) / wr.width, cy = (r.top + r.height / 2 - wr.top) / wr.height;
+      var ox = cx < 0.34 ? 'left' : cx > 0.66 ? 'right' : 'center';
+      var oy = cy < 0.34 ? 'top' : cy > 0.66 ? 'bottom' : 'center';
+      f.style.transformOrigin = ox + ' ' + oy;
+    };
+    var open = function (f) {
+      if (f.classList.contains('on')) return;
+      $$('figure.on', works).forEach(close);
+      setOrigin(f);
+      f.classList.add('on');
+      var g = f.__gif;
+      if (g) {
+        g.el.classList.remove('ready');
+        g.el.src = '';
+        g.el.src = g.src;   // 처음부터 재생
+        if (g.el.complete && g.el.naturalWidth) g.el.classList.add('ready');
+      }
+    };
+    var close = function (f) {
+      f.classList.remove('on');
+      if (f.__gif) { f.__gif.el.classList.remove('ready'); f.__gif.el.removeAttribute('src'); }
+    };
+    $$('figure', works).forEach(function (f) {
+      var lastType = 'mouse';
+      f.addEventListener('pointerdown', function (e) { lastType = e.pointerType; });
+      f.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') open(f); });
+      f.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') close(f); });
+      f.addEventListener('click', function () {
+        if (lastType === 'mouse') return;   // 마우스는 올리기만 해도 열려요
+        f.classList.contains('on') ? close(f) : open(f);
+      });
     });
   } else {
     works.innerHTML = '<div class="empty">작업물을 준비하고 있어요.</div>';
@@ -196,4 +247,11 @@
 
   applyPreview();
   render();
+}
+
+(function () {
+  fetch('data.json?t=' + Date.now(), { cache: 'no-store' })
+    .then(function (r) { return r.json(); })
+    .then(lucianStart)
+    .catch(function () { lucianStart({}); });
 })();

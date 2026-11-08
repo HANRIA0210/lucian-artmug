@@ -9,28 +9,22 @@ window.LUCIAN = {
   basePrice: 210000,
 
   // 운영 슬롯 : true = 진행중(●) / false = 비었음(○)
+  //  - 칸 수를 늘리거나 줄이려면 true/false 개수를 바꾸면 돼요.
   slots: {
     normal: [true, false, false, false],
     fast:   [true, false, false]
   },
 
-  // 추가 옵션 — price에 숫자를 넣으면 "+00,000원", 글자를 넣으면 그대로 보여요.
-  addons: [
-    { name: '빠른 마감',               price: '견적 문의' },
-    { name: '치지직 / SOOP 2가지 사용', price: '견적 문의' },
-    { name: '유튜브 사용',             price: '견적 문의' }
-  ],
-
-  // 작업물 이미지 (위 = 예전, 아래 = 최신)
+  // 작업물 — src: 평소 이미지 / gif: 마우스를 올렸을 때 움직이는 이미지
   works: [
-    { src: 'works/chat01.jpg' },
-    { src: 'works/chat02.jpg' },
-    { src: 'works/chat03.jpg' },
-    { src: 'works/chat04.jpg' },
-    { src: 'works/chat05.jpg' },
-    { src: 'works/chat06.jpg' },
-    { src: 'works/chat07.jpg' },
-    { src: 'works/chat08.jpg' },
-    { src: 'works/chat09.jpg' }
+    { src: 'works/chat01.jpg', gif: 'works/chat01.gif' },
+    { src: 'works/chat02.jpg', gif: 'works/chat02.gif' },
+    { src: 'works/chat03.jpg', gif: 'works/chat03.gif' },
+    { src: 'works/chat04.jpg', gif: 'works/chat04.gif' },
+    { src: 'works/chat05.jpg', gif: 'works/chat05.gif' },
+    { src: 'works/chat06.jpg', gif: 'works/chat06.gif' },
+    { src: 'works/chat07.jpg', gif: 'works/chat07.gif' },
+    { src: 'works/chat08.jpg', gif: 'works/chat08.gif' },
+    { src: 'works/chat09.jpg', gif: 'works/chat09.gif' }
   ]
 };

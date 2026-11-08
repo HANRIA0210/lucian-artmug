@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>루시안 · 어드민</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{--bg:#F6F3FF;--card:#fff;--line:#E6E0F7;--text:#2E2A45;--muted:#6F6A8C;--lav:#C9B8F5;--lav-l:#EDE6FD;--lav-d:#7E62D4;--sky-l:#E6F4FD;--sky-d:#3F92C9;--red:#D9546E}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:linear-gradient(180deg,#fff,var(--bg));color:var(--text);font:15px/1.6 'Pretendard','Malgun Gothic',sans-serif;min-height:100vh}
+button,input,textarea{font:inherit;color:inherit}
+.wrap{max-width:980px;margin:0 auto;padding:24px 16px 120px}
+h1{font-size:22px;margin:0}
+h2{font-size:17px;margin:0 0 4px}
+.hint{color:var(--muted);font-size:13px;margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-top:16px;box-shadow:0 8px 24px rgba(126,98,212,.08)}
+.btn{border:0;border-radius:999px;padding:10px 18px;font-weight:700;cursor:pointer;background:var(--lav-l);color:var(--lav-d)}
+.btn.main{background:linear-gradient(90deg,var(--lav-d),#9C86E8);color:#fff}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--muted)}
+.btn.del{background:#FDECF0;color:var(--red)}
+.btn:disabled{opacity:.5;cursor:default}
+input[type=text],input[type=password],input[type=number],textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#FBFAFF;outline:none}
+input:focus,textarea:focus{border-color:var(--lav-d);background:#fff}
+textarea{resize:vertical;min-height:60px}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top .sp{flex:1}
+.bar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.95);border-top:1px solid var(--line);backdrop-filter:blur(8px);z-index:10}
+.bar .in{max-width:980px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.status{flex:1;font-size:14px;color:var(--muted)}
+.status.ok{color:#2E9B6B}.status.err{color:var(--red)}
+/* login */
+.login{max-width:440px;margin:12vh auto 0}
+.login ol{padding-left:20px;color:var(--muted);font-size:13px}
+.login label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin:10px 0 16px}
+/* slots */
+.slotrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:10px 0}
+.slotrow b{width:110px}
+.dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--lav);background:#fff;cursor:pointer;padding:0}
+.dot.full{background:linear-gradient(135deg,var(--lav-d),var(--sky-d));border-color:transparent}
+/* list editor */
+.item{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
+.item .f{flex:1;display:flex;flex-direction:column;gap:6px}
+.item .ctl{display:flex;flex-direction:column;gap:4px}
+.item .ctl button{width:32px;height:28px;padding:0;border-radius:8px}
+/* works */
+.works{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.w{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+.w img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;background:var(--bg)}
+.w .r{display:flex;gap:4px;padding:6px;justify-content:space-between;align-items:center}
+.w .tag{font-size:11px;color:var(--muted)}
+.add{border:2px dashed var(--lav);border-radius:14px;padding:16px;margin-top:14px;background:#FBFAFF}
+.add .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.add .row label{font-size:13px;color:var(--muted);min-width:150px}
+.hide{display:none!important}
+.num{width:180px!important}
+@media(max-width:600px){.slotrow b{width:100%}}
+</style>
+</head>
+<body>
+
+<!-- 로그인 -->
+<div class="wrap login" id="loginView">
+  <div class="card">
+    <h1>🔒 루시안 어드민</h1>
+    <p class="hint">GitHub 접근 키(토큰)로 들어가요. 처음 한 번만 넣으면 이 브라우저가 기억해요.</p>
+    <input type="password" id="tokenIn" placeholder="github_pat_ 로 시작하는 키" autocomplete="off">
+    <label><input type="checkbox" id="remember" checked> 이 브라우저에서 기억하기</label>
+    <button class="btn main" id="loginBtn" style="width:100%">들어가기</button>
+    <p class="status" id="loginMsg" style="margin-top:10px"></p>
+    <details style="margin-top:8px">
+      <summary class="hint" style="cursor:pointer;margin:0">키 만드는 법</summary>
+      <ol>
+        <li>GitHub → 오른쪽 위 프로필 → Settings → Developer settings → Personal access tokens → <b>Fine-grained tokens</b> → Generate new token</li>
+        <li>Repository access: <b>Only select repositories</b> → lucian-artmug</li>
+        <li>Permissions → Repository permissions → <b>Contents: Read and write</b></li>
+        <li>Generate 후 나온 키를 복사해서 위 칸에 붙여 넣기</li>
+      </ol>
+    </details>
+  </div>
+</div>
+
+<!-- 편집 -->
+<div class="wrap hide" id="editView">
+  <div class="top">
+    <h1>루시안 어드민</h1>
+    <span class="sp"></span>
+    <a class="btn ghost sm" href="./" target="_blank" style="text-decoration:none">페이지 보기 ↗</a>
+    <button class="btn ghost sm" id="logoutBtn">로그아웃</button>
+  </div>
+
+  <div class="card">
+    <h2>운영 슬롯</h2>
+    <p class="hint">동그라미를 누르면 진행중(●) ↔ 비었음(○)이 바뀌어요.</p>
+    <div class="slotrow"><b>운영 슬롯</b><span id="slotNormal"></span><button class="btn sm ghost" data-slot="normal" data-d="1">＋ 칸</button><button class="btn sm ghost" data-slot="normal" data-d="-1">－ 칸</button></div>
+    <div class="slotrow"><b>빠른 마감 슬롯</b><span id="slotFast"></span><button class="btn sm ghost" data-slot="fast" data-d="1">＋ 칸</button><button class="btn sm ghost" data-slot="fast" data-d="-1">－ 칸</button></div>
+  </div>
+
+  <div class="card">
+    <h2>가격</h2>
+    <p class="hint">숫자만 입력해 주세요. (예: 210000)</p>
+    <input type="number" class="num" id="basePrice">
+    <h2 style="margin-top:18px">기본 가격 카드 목록</h2>
+    <div id="ed_included"></div>
+    <h2 style="margin-top:18px">기본적으로 포함되는 사항</h2>
+    <div id="ed_basics"></div>
+  </div>
+
+  <div class="card">
+    <h2>상단 공지</h2>
+    <p class="hint">페이지 위쪽 분홍·하늘 박스에 들어가는 문장이에요. 굵게: &lt;b&gt;글자&lt;/b&gt;</p>
+    <div id="ed_alert"></div>
+  </div>
+
+  <div class="card">
+    <h2>진행 순서 (PROCESS)</h2>
+    <div id="ed_process"></div>
+  </div>
+
+  <div class="card">
+    <h2>신청 전에 꼭 읽어 주세요 (안내사항)</h2>
+    <p class="hint">내용 칸에서 줄바꿈하면 문단이 나뉘어요. 굵게: &lt;b&gt;글자&lt;/b&gt;</p>
+    <div id="ed_notices"></div>
+  </div>
+
+  <div class="card">
+    <h2>작업물</h2>
+    <p class="hint">위(왼쪽)부터 순서대로 보여요. 화살표로 순서를 바꿀 수 있어요.</p>
+    <div class="works" id="worksEd"></div>
+    <div class="add">
+      <b>작업물 추가</b>
+      <div class="row"><label>움직이는 GIF (마우스 올렸을 때)</label><input type="file" id="addGif" accept="image/gif"></div>
+      <div class="row"><label>정지 이미지 (선택 · 없으면 GIF 첫 장면 사용)</label><input type="file" id="addImg" accept="image/png,image/jpeg,image/webp"></div>
+      <button class="btn main sm" id="addBtn">업로드하고 목록에 추가</button>
+      <span class="status" id="addMsg"></span>
+    </div>
+  </div>
+</div>
+
+<div class="bar hide" id="bar"><div class="in">
+  <span class="status" id="saveMsg">바꾼 뒤 「저장」을 눌러야 페이지에 반영돼요.</span>
+  <button class="btn main" id="saveBtn">저장</button>
+</div></div>
+
+<script>
+(function(){
+  var OWNER='HANRIA0210', REPO='lucian-artmug', BRANCH='main', FILE='data.json';
+  var API='https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/';
+  var KEY='lucian-admin-token';
+  var token='', data=null, sha=null, dirty=false;
+  var $=function(s){return document.querySelector(s)};
+  var esc=function(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')};
+
+  function store(get,val){ try{ if(get) return localStorage.getItem(KEY); if(val) localStorage.setItem(KEY,val); else localStorage.removeItem(KEY);}catch(e){} return null; }
+  function gh(path,opt){
+    opt=opt||{}; opt.headers=Object.assign({'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json'},opt.headers||{});
+    return fetch(API+path,opt).then(function(r){ if(!r.ok) return r.json().catch(function(){return{}}).then(function(j){throw new Error(r.status+' '+(j.message||''))}); return r.json(); });
+  }
+  var b64enc=function(str){return btoa(unescape(encodeURIComponent(str)))};
+  var b64dec=function(b){return decodeURIComponent(escape(atob(b.replace(/\n/g,''))))};
+  function putFile(path,b64,msg,fileSha){
+    var body={message:msg,content:b64,branch:BRANCH}; if(fileSha) body.sha=fileSha;
+    return gh(path,{method:'PUT',body:JSON.stringify(body),headers:{'Content-Type':'application/json'}});
+  }
+  function setMsg(el,t,cls){ el.textContent=t; el.className='status'+(cls?' '+cls:''); }
+  function mark(){ dirty=true; setMsg($('#saveMsg'),'바뀐 내용이 있어요. 「저장」을 눌러 주세요.'); }
+
+  /* ── 로그인 ── */
+  function login(t){
+    token=t; setMsg($('#loginMsg'),'확인 중…');
+    return gh(FILE+'?ref='+BRANCH+'&t='+Date.now()).then(function(j){
+      sha=j.sha; data=JSON.parse(b64dec(j.content));
+      if($('#remember').checked) store(false,t);
+      $('#loginView').classList.add('hide'); $('#editView').classList.remove('hide'); $('#bar').classList.remove('hide');
+      renderAll();
+    }).catch(function(e){ setMsg($('#loginMsg'),'들어가지 못했어요. 키를 다시 확인해 주세요. ('+e.message+')','err'); store(false,null); });
+  }
+  $('#loginBtn').onclick=function(){ var t=$('#tokenIn').value.trim(); if(t) login(t); };
+  $('#tokenIn').onkeydown=function(e){ if(e.key==='Enter') $('#loginBtn').click(); };
+  $('#logoutBtn').onclick=function(){ store(false,null); location.reload(); };
+  var saved=store(true); if(saved) login(saved);
+
+  /* ── 슬롯 ── */
+  function renderSlots(){
+    ['normal','fast'].forEach(function(k){
+      var box=$(k==='normal'?'#slotNormal':'#slotFast'); box.innerHTML='';
+      (data.slots[k]||[]).forEach(function(v,i){
+        var b=document.createElement('button'); b.className='dot'+(v?' full':''); b.title=v?'진행중':'비었음';
+        b.onclick=function(){ data.slots[k][i]=!data.slots[k][i]; renderSlots(); mark(); };
+        box.appendChild(b); box.appendChild(document.createTextNode(' '));
+      });
+    });
+  }
+  document.querySelectorAll('[data-slot]').forEach(function(b){
+    b.onclick=function(){ var k=b.dataset.slot, a=data.slots[k]; if(+b.dataset.d>0) a.push(false); else if(a.length>1) a.pop(); renderSlots(); mark(); };
+  });
+
+  /* ── 목록 편집기 (글 / 제목+내용) ── */
+  function listEditor(id,key,fields,blank){
+    var root=$(id);
+    function draw(){
+      root.innerHTML='';
+      data[key].forEach(function(it,i){
+        var row=document.createElement('div'); row.className='item';
+        var f=document.createElement('div'); f.className='f';
+        if(!fields){
+          var inp=document.createElement('input'); inp.type='text'; inp.value=it;
+          inp.oninput=function(){ data[key][i]=inp.value; mark(); }; f.appendChild(inp);
+        } else fields.forEach(function(fd){
+          var el=document.createElement(fd.multi?'textarea':'input'); if(!fd.multi) el.type='text';
+          el.placeholder=fd.label; el.value=it[fd.k]||'';
+          el.oninput=function(){ data[key][i][fd.k]=el.value; mark(); }; f.appendChild(el);
+        });
+        var c=document.createElement('div'); c.className='ctl';
+        [['↑',-1],['↓',1]].forEach(function(p){ var b=document.createElement('button'); b.className='btn sm ghost'; b.textContent=p[0];
+          b.onclick=function(){ var j=i+p[1]; if(j<0||j>=data[key].length) return; var t=data[key][i]; data[key][i]=data[key][j]; data[key][j]=t; draw(); mark(); }; c.appendChild(b); });
+        var d=document.createElement('button'); d.className='btn sm del'; d.textContent='✕';
+        d.onclick=function(){ if(confirm('이 항목을 지울까요?')){ data[key].splice(i,1); draw(); mark(); } }; c.appendChild(d);
+        row.appendChild(f); row.appendChild(c); root.appendChild(row);
+      });
+      var add=document.createElement('button'); add.className='btn sm'; add.textContent='＋ 항목 추가';
+      add.onclick=function(){ data[key].push(JSON.parse(JSON.stringify(blank))); draw(); mark(); };
+      root.appendChild(add);
+    }
+    if(!Array.isArray(data[key])) data[key]=[];
+    draw();
+  }
+
+  /* ── 작업물 ── */
+  function renderWorks(){
+    var root=$('#worksEd'); root.innerHTML='';
+    data.works.forEach(function(w,i){
+      var el=document.createElement('div'); el.className='w';
+      el.innerHTML='<img src="./'+esc(w.src)+'" alt=""><div class="r"><span class="tag">'+(i+1)+(w.gif?' · GIF':'')+'</span><span></span></div>';
+      var ctl=el.querySelector('.r span:last-child');
+      [['←',-1],['→',1]].forEach(function(p){ var b=document.createElement('button'); b.className='btn sm ghost'; b.textContent=p[0];
+        b.onclick=function(){ var j=i+p[1]; if(j<0||j>=data.works.length) return; var t=data.works[i]; data.works[i]=data.works[j]; data.works[j]=t; renderWorks(); mark(); }; ctl.appendChild(b); });
+      var d=document.createElement('button'); d.className='btn sm del'; d.textContent='✕';
+      d.onclick=function(){ if(confirm((i+1)+'번 작업물을 목록에서 뺄까요?')){ data.works.splice(i,1); renderWorks(); mark(); } };
+      ctl.appendChild(d); root.appendChild(el);
+    });
+  }
+  function fileB64(file){ return new Promise(function(res,rej){ var r=new FileReader(); r.onload=function(){res(String(r.result).split(',')[1])}; r.onerror=rej; r.readAsDataURL(file); }); }
+  function firstFrameJpg(file){
+    return new Promise(function(res,rej){
+      var url=URL.createObjectURL(file), img=new Image();
+      img.onload=function(){ var s=Math.min(1,1080/Math.max(img.naturalWidth,img.naturalHeight));
+        var c=document.createElement('canvas'); c.width=Math.round(img.naturalWidth*s); c.height=Math.round(img.naturalHeight*s);
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url);
+        res(c.toDataURL('image/jpeg',0.86).split(',')[1]); };
+      img.onerror=rej; img.src=url;
+    });
+  }
+  $('#addBtn').onclick=function(){
+    var gif=$('#addGif').files[0], still=$('#addImg').files[0], msg=$('#addMsg');
+    if(!gif && !still){ setMsg(msg,'파일을 골라 주세요.','err'); return; }
+    var stamp=Date.now(), base='works/w'+stamp, item={}, btn=this; btn.disabled=true;
+    setMsg(msg,'업로드 중… (GIF는 조금 걸릴 수 있어요)');
+    var jobs=Promise.resolve();
+    if(gif) jobs=jobs.then(function(){ return fileB64(gif); }).then(function(b){ return putFile(base+'.gif',b,'작업물 GIF 추가'); }).then(function(){ item.gif=base+'.gif'; });
+    jobs=jobs.then(function(){
+      if(still){ var ext=(still.name.split('.').pop()||'jpg').toLowerCase(); return fileB64(still).then(function(b){ return putFile(base+'.'+ext,b,'작업물 이미지 추가'); }).then(function(){ item.src=base+'.'+ext; }); }
+      return firstFrameJpg(gif).then(function(b){ return putFile(base+'.jpg',b,'작업물 이미지 추가'); }).then(function(){ item.src=base+'.jpg'; });
+    });
+    jobs.then(function(){
+      data.works.push(item); renderWorks(); mark();
+      $('#addGif').value=''; $('#addImg').value='';
+      setMsg(msg,'올렸어요! 맨 끝에 추가됐어요. 「저장」을 눌러야 페이지에 나와요.','ok');
+    }).catch(function(e){ setMsg(msg,'업로드 실패: '+e.message,'err'); }).then(function(){ btn.disabled=false; });
+  };
+
+  /* ── 전체 그리기 / 저장 ── */
+  function renderAll(){
+    data.slots=data.slots||{normal:[],fast:[]}; data.works=data.works||[];
+    renderSlots();
+    $('#basePrice').value=data.basePrice||''; $('#basePrice').oninput=function(){ data.basePrice=Number($('#basePrice').value)||0; mark(); };
+    listEditor('#ed_included','included',null,'');
+    listEditor('#ed_basics','basics',null,'');
+    listEditor('#ed_alert','alert',null,'');
+    listEditor('#ed_process','process',[{k:'title',label:'제목'},{k:'text',label:'내용',multi:true}],{title:'',text:''});
+    listEditor('#ed_notices','notices',[{k:'title',label:'제목'},{k:'text',label:'내용',multi:true}],{title:'',text:''});
+    renderWorks();
+  }
+  $('#saveBtn').onclick=function(){
+    var btn=this; btn.disabled=true; setMsg($('#saveMsg'),'저장 중…');
+    putFile(FILE,b64enc(JSON.stringify(data,null,2)+'\n'),'어드민에서 내용 수정',sha).then(function(j){
+      sha=j.content.sha; dirty=false;
+      setMsg($('#saveMsg'),'저장했어요! 1~2분 뒤 아트머그 페이지에 반영돼요.','ok');
+    }).catch(function(e){
+      setMsg($('#saveMsg'),'저장 실패: '+e.message+(/409|sha/i.test(e.message)?' (다른 곳에서 먼저 바뀌었어요. 새로고침 후 다시 해 주세요.)':''),'err');
+    }).then(function(){ btn.disabled=false; });
+  };
+  window.addEventListener('beforeunload',function(e){ if(dirty){ e.preventDefault(); e.returnValue=''; } });
+})();
+</script>
+</body>
+</html>

@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="style.css?v=2">
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 <div class="page">
@@ -51,10 +51,7 @@
   </header>
 
   <!-- ALERT -->
-  <section class="alert">
-    <p><b>결제 전 꼭 문의 먼저 해주세요.</b> 아래 양식대로 보내주시면 빠르게 진행할 수 있어요.</p>
-    <p>디스코드·트위터 등 다른 연락처로는 문의를 받지 않아요. 문의와 피드백은 <b>아트머그 문의</b>로만 진행합니다.</p>
-  </section>
+  <section class="alert" id="alert"></section>
 
   <!-- PREVIEW -->
   <section class="sec" id="preview">
@@ -131,18 +128,12 @@
       <div class="card price-main">
         <p class="card-tag">기본 가격</p>
         <p class="won"><span id="basePrice">210,000</span>원</p>
-        <ul class="incl">
-          <li>위플랩 커스텀 CSS</li>
-          <li>CSS 전달 전 디자인 수정 2회</li>
-          <li>완성 후 설치법 안내</li>
-          <li>전달 후 오류 대응</li>
-        </ul>
+        <ul class="incl" id="included"></ul>
         <p class="muted">신청 옵션에 따라 추가금이 붙을 수 있어요.</p>
       </div>
       <div class="card">
-        <p class="card-tag">추가 옵션</p>
-        <ul class="addons" id="addons"></ul>
-        <p class="muted">정확한 금액은 문의 후 견적으로 안내드려요.</p>
+        <p class="card-tag">기본적으로 포함되는 사항</p>
+        <ol class="basics" id="basics"></ol>
       </div>
     </div>
   </section>
@@ -153,13 +144,7 @@
       <p class="tag">PROCESS</p>
       <h2>이렇게 진행돼요</h2>
     </div>
-    <ol class="steps">
-      <li><b>문의</b><span>신청 양식을 복사해 아트머그 문의로 보내주세요.</span></li>
-      <li><b>견적 · 입금</b><span>문의 후 견적 안내를 받으시고 결제를 진행해 주세요. 문의순이 아닌 <em>입금순</em>으로 진행돼요.</span></li>
-      <li><b>디자인 · 수정</b><span>CSS 전달 전까지 디자인 수정 2회 가능해요.</span></li>
-      <li><b>CSS 전달</b><span>완성 CSS와 설치법을 함께 보내드려요.</span></li>
-      <li><b>오류 대응</b><span>한 달 동안 오류 제보를 받고, 그 이후에는 파일을 정리하기 때문에 수정이 어려워요.</span></li>
-    </ol>
+    <ol class="steps" id="steps"></ol>
   </section>
 
   <!-- NOTICE -->
@@ -168,36 +153,7 @@
       <p class="tag">NOTICE</p>
       <h2>신청 전에 꼭 읽어 주세요</h2>
     </div>
-    <div class="acc">
-      <details open>
-        <summary>사용 환경</summary>
-        <p><b>위플랩 커스텀 CSS</b>에서 사용 가능합니다. 치지직, SOOP 모두 제작해요.</p>
-      </details>
-      <details>
-        <summary>수정 범위</summary>
-        <p>CSS 전달 전까지 디자인 수정 <b>2회</b> 가능합니다.</p>
-        <p>CSS 전달 후에는 <b>오류에 대한 대응만</b> 해드리고 있어요. 파일을 전달받으신 이후 디자인 변경, 수정 등은 어렵습니다.</p>
-      </details>
-      <details>
-        <summary>일정 · 마감</summary>
-        <p>문의순이 아닌 <b>입금순</b>으로 진행됩니다.</p>
-        <p>입금한 날짜로부터 <b>15일 마감</b>이에요. 짧은 기간에 신청이 몰리면 입금 순서대로 진행하며 마감기한이 변동될 수 있어요. 빠른 마감은 추가금이 있어요.</p>
-      </details>
-      <details>
-        <summary>오류 대응</summary>
-        <p>한 달이 지난 후 오류에 대한 제보가 없다고 판단되면 추가적인 수정은 진행해 드리기 어려워요.</p>
-      </details>
-      <details>
-        <summary>제작 기본 사항</summary>
-        <p>스트리머 아이콘(왕관)은 기본적으로 제외하고 제작됩니다.</p>
-        <p>완성 후 CSS 설치법을 전달 드려요.</p>
-      </details>
-      <details>
-        <summary>문의 방법</summary>
-        <p>디스코드, 트위터 등 다른 연락처로는 문의를 받지 않아요. 문의와 피드백은 <b>아트머그 문의</b>로만 진행합니다.</p>
-        <p>양식을 요청드렸는데 제대로 작성해 주시지 않으면, 이후 생기는 문제는 책임지기 어려워요.</p>
-      </details>
-    </div>
+    <div class="acc" id="notices"></div>
   </section>
 
   <!-- FORM -->
@@ -246,7 +202,7 @@
     <div class="sec-head">
       <p class="tag">WORKS</p>
       <h2>작업물</h2>
-      <p class="sub">위(예전 작업물) ~ 아래(최신 작업물) 순서예요.</p>
+      <p class="sub">마우스를 올리면(모바일은 터치) 크게 보이면서 움직이는 모습을 볼 수 있어요.</p>
     </div>
     <div class="works" id="worksList"></div>
     <p class="warn">다른 작가님께 제 작업물을 캡쳐·저장하여 레퍼런스로 제공하지 말아 주세요.</p>
@@ -255,7 +211,6 @@
   <footer class="foot">© Lucian · 채팅창 CSS 주문제작</footer>
 </div>
 
-<script src="config.js?v=2"></script>
-<script src="app.js?v=2"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>
