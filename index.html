@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lucian · 채팅창 CSS 주문제작</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<div class="page">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a class="brand" href="#top" data-go="top"><span class="moon"></span>Lucian</a>
+    <div class="nav-links">
+      <a href="#preview" data-go="preview">미리보기</a>
+      <a href="#price" data-go="price">가격</a>
+      <a href="#notice" data-go="notice">안내</a>
+      <a href="#works" data-go="works">작업물</a>
+    </div>
+    <a class="nav-cta" href="#form" data-go="form">신청 양식</a>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero" id="top">
+    <div class="stars" aria-hidden="true"></div>
+    <p class="eyebrow">CUSTOM CHAT CSS · CHZZK · SOOP</p>
+    <h1>방송 화면에 어울리는<br><em>나만의 채팅창</em></h1>
+    <p class="lead">위플랩 커스텀 CSS로 바로 쓰는 채팅창을 만들어 드려요.<br>방송 컨셉과 색에 맞춰 하나하나 디자인합니다.</p>
+    <div class="hero-btns">
+      <a class="btn btn-main" href="#form" data-go="form">신청 양식 쓰기</a>
+      <a class="btn btn-ghost" href="#preview" data-go="preview">옵션 미리보기</a>
+    </div>
+    <ul class="chips">
+      <li>위플랩 커스텀 CSS</li><li>치지직</li><li>SOOP</li><li>수정 2회</li><li>설치법 안내</li>
+    </ul>
+  </header>
+
+  <!-- ALERT -->
+  <section class="alert">
+    <p><b>결제 전 꼭 문의 먼저 해주세요.</b> 아래 양식대로 보내주시면 빠르게 진행할 수 있어요.</p>
+    <p>디스코드·트위터 등 다른 연락처로는 문의를 받지 않아요. 문의와 피드백은 <b>아트머그 문의</b>로만 진행합니다.</p>
+  </section>
+
+  <!-- PREVIEW -->
+  <section class="sec" id="preview">
+    <div class="sec-head">
+      <p class="tag">PREVIEW</p>
+      <h2>옵션을 골라 보세요</h2>
+      <p class="sub">신청 양식의 상세 옵션을 바꾸면 미리보기가 바로 바뀌어요. 고른 옵션은 아래 신청 양식에 그대로 들어가요.</p>
+    </div>
+
+    <div class="pv-wrap">
+      <div class="pv-screen">
+        <div class="pv-bar"><span></span><span></span><span></span><b>CHAT</b></div>
+        <div class="chat" id="chat">
+          <div class="msg viewer" data-type="viewer">
+            <div class="who"><i class="ic"></i><i class="ic ic2"></i><span class="nick">달빛여우</span></div>
+            <div class="bubble">오늘 방송 너무 기다렸어요!</div>
+          </div>
+          <div class="msg streamer" data-type="streamer">
+            <div class="who"><span class="nick" data-streamer>스트리머</span></div>
+            <div class="bubble">어서 오세요~ 오늘도 반가워요</div>
+          </div>
+          <div class="msg viewer" data-type="viewer">
+            <div class="who"><i class="ic"></i><span class="nick">새벽별</span></div>
+            <div class="bubble">채팅창 너무 예뻐요</div>
+          </div>
+          <div class="msg donation" data-type="donation">
+            <div class="who"><i class="ic"></i><span class="nick">구름조각</span></div>
+            <div class="bubble"><span class="amt">1,000원</span>응원합니다!</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pv-panel">
+        <div class="opt">
+          <span class="opt-label">시청자 닉네임 표기</span>
+          <div class="seg" data-key="viewerNick"><button data-v="O" class="on">O</button><button data-v="X">X</button></div>
+        </div>
+        <div class="opt">
+          <span class="opt-label">스트리머 닉네임 표기</span>
+          <div class="seg" data-key="streamerNick"><button data-v="O" class="on">O</button><button data-v="X">X</button></div>
+        </div>
+        <div class="opt">
+          <span class="opt-label">시청자 아이콘 표기 <small>구독, 후원랭킹 등</small></span>
+          <div class="seg" data-key="viewerIcon"><button data-v="O" class="on">O</button><button data-v="X">X</button></div>
+        </div>
+        <div class="opt">
+          <span class="opt-label">시청자 채팅 정렬</span>
+          <div class="seg" data-key="viewerAlign"><button data-v="좌" class="on">좌</button><button data-v="중앙">중앙</button><button data-v="우">우</button></div>
+        </div>
+        <div class="opt">
+          <span class="opt-label">스트리머 채팅 정렬</span>
+          <div class="seg" data-key="streamerAlign"><button data-v="좌">좌</button><button data-v="중앙">중앙</button><button data-v="우" class="on">우</button></div>
+        </div>
+        <div class="opt">
+          <span class="opt-label">후원 채팅 정렬</span>
+          <div class="seg" data-key="donationAlign"><button data-v="좌">좌</button><button data-v="중앙" class="on">중앙</button><button data-v="우">우</button></div>
+        </div>
+        <div class="opt">
+          <span class="opt-label">방송 플랫폼</span>
+          <div class="seg" data-key="platform"><button data-v="치지직" class="on">치지직</button><button data-v="SOOP">SOOP</button></div>
+        </div>
+        <p class="pv-note">미리보기는 옵션 확인용 예시예요. 실제 디자인은 컨셉에 맞춰 새로 만들어 드려요.<br>스트리머 아이콘(왕관)은 기본적으로 제외하고 제작돼요.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICE -->
+  <section class="sec sec-alt" id="price">
+    <div class="sec-head">
+      <p class="tag">PRICE</p>
+      <h2>가격</h2>
+    </div>
+    <div class="price-grid">
+      <div class="card price-main">
+        <p class="card-tag">기본 가격</p>
+        <p class="won"><span id="basePrice">180,000</span>원</p>
+        <ul class="incl">
+          <li>위플랩 커스텀 CSS</li>
+          <li>CSS 전달 전 디자인 수정 2회</li>
+          <li>완성 후 설치법 안내</li>
+          <li>전달 후 오류 대응</li>
+        </ul>
+        <p class="muted">신청 옵션에 따라 추가금이 붙을 수 있어요.</p>
+      </div>
+      <div class="card">
+        <p class="card-tag">추가 옵션</p>
+        <ul class="addons" id="addons"></ul>
+        <p class="muted">정확한 금액은 문의 후 견적으로 안내드려요.</p>
+      </div>
+    </div>
+
+    <div class="slots">
+      <div class="card slot-card">
+        <p class="card-tag">운영 슬롯</p>
+        <div class="dots" id="slotNormal"></div>
+      </div>
+      <div class="card slot-card">
+        <p class="card-tag">빠른 마감 슬롯</p>
+        <div class="dots" id="slotFast"></div>
+      </div>
+      <p class="slot-legend"><span class="dot"></span> 비었음 &nbsp;&nbsp; <span class="dot full"></span> 진행중</p>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="sec" id="process">
+    <div class="sec-head">
+      <p class="tag">PROCESS</p>
+      <h2>이렇게 진행돼요</h2>
+    </div>
+    <ol class="steps">
+      <li><b>문의</b><span>신청 양식을 복사해 아트머그 문의로 보내주세요.</span></li>
+      <li><b>견적 · 입금</b><span>견적 안내 후 결제해 주세요. 문의순이 아닌 <em>입금순</em>으로 진행돼요.</span></li>
+      <li><b>디자인 · 수정</b><span>CSS 전달 전까지 디자인 수정 2회 가능해요.</span></li>
+      <li><b>CSS 전달</b><span>완성 CSS와 설치법을 함께 보내드려요.</span></li>
+      <li><b>오류 대응</b><span>약 2주 동안 오류 제보를 받고, 이후 오픈카톡방은 정리해요.</span></li>
+    </ol>
+  </section>
+
+  <!-- NOTICE -->
+  <section class="sec sec-alt" id="notice">
+    <div class="sec-head">
+      <p class="tag">NOTICE</p>
+      <h2>신청 전에 꼭 읽어 주세요</h2>
+    </div>
+    <div class="acc">
+      <details open>
+        <summary>사용 환경</summary>
+        <p><b>위플랩 커스텀 CSS</b>에서 사용 가능합니다. 치지직, SOOP 모두 제작해요.</p>
+      </details>
+      <details>
+        <summary>수정 범위</summary>
+        <p>CSS 전달 전까지 디자인 수정 <b>2회</b> 가능합니다.</p>
+        <p>CSS 전달 후에는 <b>오류에 대한 대응만</b> 해드리고 있어요. 파일을 전달받으신 이후 디자인 변경, 수정 등은 어렵습니다.</p>
+      </details>
+      <details>
+        <summary>일정 · 마감</summary>
+        <p>문의순이 아닌 <b>입금순</b>으로 진행됩니다.</p>
+        <p>입금한 날짜로부터 <b>15일 마감</b>이에요. 짧은 기간에 신청이 몰리면 입금 순서대로 진행하며 마감기한이 변동될 수 있어요. 빠른 마감은 추가금이 있어요.</p>
+      </details>
+      <details>
+        <summary>오류 대응 · 오픈카톡방</summary>
+        <p>일정 기간(약 2주)이 지난 후 오류에 대한 제보가 없다고 판단되면 의뢰를 진행하신 오픈카톡방은 삭제합니다.</p>
+      </details>
+      <details>
+        <summary>제작 기본 사항</summary>
+        <p>스트리머 아이콘(왕관)은 기본적으로 제외하고 제작됩니다.</p>
+        <p>완성 후 CSS 설치법을 전달 드려요.</p>
+      </details>
+      <details>
+        <summary>문의 방법</summary>
+        <p>디스코드, 트위터 등 다른 연락처로는 문의를 받지 않아요. 문의와 피드백은 <b>아트머그 문의</b>로만 진행합니다.</p>
+        <p>양식을 요청드렸는데 제대로 작성해 주시지 않으면, 이후 생기는 문제는 책임지기 어려워요.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- FORM -->
+  <section class="sec" id="form">
+    <div class="sec-head">
+      <p class="tag">ORDER FORM</p>
+      <h2>디자인 신청 양식</h2>
+      <p class="sub">칸을 채우고 <b>「양식 복사」</b>를 누른 뒤, 아트머그 문의 창에 붙여 넣어 주세요.</p>
+    </div>
+
+    <div class="form-wrap">
+      <div class="card form-card">
+        <h3><span>1</span>방송 정보</h3>
+        <label>채널 주소<input type="text" id="f_url" placeholder="https://chzzk.naver.com/..."></label>
+        <div class="row2">
+          <label>활동명 (한글)<input type="text" id="f_ko" placeholder="루시안"></label>
+          <label>활동명 (영문)<input type="text" id="f_en" placeholder="Lucian"></label>
+        </div>
+
+        <h3><span>2</span>상세 옵션</h3>
+        <p class="hint">위 미리보기에서 고른 옵션이 들어가요. <a href="#preview" data-go="preview">옵션 바꾸기 ↑</a></p>
+        <ul class="picked" id="picked"></ul>
+
+        <h3><span>3</span>희망 마감일</h3>
+        <label>기본 마감일 15일 · 빠른 마감 시 추가금<input type="text" id="f_due" placeholder="예) 11월 30일 / 기본 마감"></label>
+
+        <h3><span>4</span>컨셉 설명</h3>
+        <label class="full"><textarea id="f_concept" rows="4" placeholder="원하는 분위기, 메인 색, 캐릭터·로고 여부 등을 자세히 적어 주세요."></textarea></label>
+
+        <h3><span>5</span>자료 전달</h3>
+        <label>구글 드라이브 공유 링크<input type="text" id="f_drive" placeholder="https://drive.google.com/..."></label>
+      </div>
+
+      <div class="card copy-card">
+        <p class="card-tag">복사될 내용</p>
+        <pre id="out"></pre>
+        <button class="btn btn-main" id="copyBtn" type="button">양식 복사</button>
+        <p class="copy-msg" id="copyMsg" aria-live="polite"></p>
+        <p class="muted">전화번호·이메일 같은 개인 연락처는 적지 마세요.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKS -->
+  <section class="sec sec-alt" id="works">
+    <div class="sec-head">
+      <p class="tag">WORKS</p>
+      <h2>작업물</h2>
+      <p class="sub">위(예전 작업물) ~ 아래(최신 작업물) 순서예요.</p>
+    </div>
+    <div class="works" id="worksList"></div>
+    <p class="warn">다른 작가님께 제 작업물을 캡쳐·저장하여 레퍼런스로 제공하지 말아 주세요.</p>
+  </section>
+
+  <footer class="foot">© Lucian · 채팅창 CSS 주문제작</footer>
+</div>
+
+<script src="config.js?v=1"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>
