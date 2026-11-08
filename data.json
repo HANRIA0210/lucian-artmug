@@ -2,13 +2,13 @@
   "basePrice": 210000,
   "slots": {
     "normal": [
-      true,
+      false,
       false,
       false,
       false
     ],
     "fast": [
-      true,
+      false,
       false,
       false
     ]
