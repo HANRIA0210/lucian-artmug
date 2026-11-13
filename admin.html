@@ -7,7 +7,7 @@
 <title>루시안 · 어드민</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
-:root{--bg:#F6F3FF;--card:#fff;--line:#E6E0F7;--text:#2E2A45;--muted:#6F6A8C;--lav:#C9B8F5;--lav-l:#EDE6FD;--lav-d:#7E62D4;--sky-l:#E6F4FD;--sky-d:#3F92C9;--red:#D9546E}
+:root{--bg:#F6F3FF;--card:#fff;--line:#E6E0F7;--text:#2E2A45;--muted:#6F6A8C;--lav:#C9B8F5;--lav-l:#EDE6FD;--lav-d:#7E62D4;--sky-l:#E6F4FD;--sky-d:#7E62D4;--red:#D9546E}
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:linear-gradient(180deg,#fff,var(--bg));color:var(--text);font:15px/1.6 'Pretendard','Malgun Gothic',sans-serif;min-height:100vh}
@@ -18,7 +18,7 @@ h2{font-size:17px;margin:0 0 4px}
 .hint{color:var(--muted);font-size:13px;margin:0 0 14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-top:16px;box-shadow:0 8px 24px rgba(126,98,212,.08)}
 .btn{border:0;border-radius:999px;padding:10px 18px;font-weight:700;cursor:pointer;background:var(--lav-l);color:var(--lav-d)}
-.btn.main{background:linear-gradient(90deg,var(--lav-d),#9C86E8);color:#fff}
+.btn.main{background:var(--lav-d);color:#fff}
 .btn.sm{padding:6px 12px;font-size:13px}
 .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--muted)}
 .btn.del{background:#FDECF0;color:var(--red)}
@@ -40,7 +40,7 @@ textarea{resize:vertical;min-height:60px}
 .slotrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:10px 0}
 .slotrow b{width:110px}
 .dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--lav);background:#fff;cursor:pointer;padding:0}
-.dot.full{background:linear-gradient(135deg,var(--lav-d),var(--sky-d));border-color:transparent}
+.dot.full{background:var(--lav-d);border-color:transparent}
 /* list editor */
 .item{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
 .item .f{flex:1;display:flex;flex-direction:column;gap:6px}
@@ -133,7 +133,7 @@ textarea{resize:vertical;min-height:60px}
     <div class="add">
       <b>작업물 추가</b>
       <div class="row"><label>움직이는 GIF (마우스 올렸을 때)</label><input type="file" id="addGif" accept="image/gif"></div>
-      <div class="row"><label>정지 이미지 (선택 · 없으면 GIF 첫 장면 사용)</label><input type="file" id="addImg" accept="image/png,image/jpeg,image/webp"></div>
+      <div class="row"><label>정지 이미지 (선택 · 없으면 GIF에서 자동으로 만들어요)</label><input type="file" id="addImg" accept="image/png,image/jpeg,image/webp"></div>
       <button class="btn main sm" id="addBtn">업로드하고 목록에 추가</button>
       <span class="status" id="addMsg"></span>
     </div>
@@ -244,13 +244,27 @@ textarea{resize:vertical;min-height:60px}
     });
   }
   function fileB64(file){ return new Promise(function(res,rej){ var r=new FileReader(); r.onload=function(){res(String(r.result).split(',')[1])}; r.onerror=rej; r.readAsDataURL(file); }); }
+  /* GIF에서 내용이 다 나온 장면(재생 시간의 약 75%)을 골라 정지 이미지로 만든다 */
+  function toJpg(src,w,h){ var s=Math.min(1,1080/Math.max(w,h)), c=document.createElement('canvas'); c.width=Math.round(w*s); c.height=Math.round(h*s);
+    c.getContext('2d').drawImage(src,0,0,c.width,c.height); return c.toDataURL('image/jpeg',0.86).split(',')[1]; }
   function firstFrameJpg(file){
+    if('ImageDecoder' in window){
+      return file.arrayBuffer().then(function(buf){
+        var dec=new ImageDecoder({data:buf,type:'image/gif'});
+        return dec.tracks.ready.then(function(){
+          var n=dec.tracks.selectedTrack.frameCount, durs=[], i=0;
+          function next(){ if(i>=n) return Promise.resolve(); return dec.decode({frameIndex:i}).then(function(r){ durs.push(r.image.duration||0); r.image.close(); i++; return next(); }); }
+          return next().then(function(){
+            var tot=durs.reduce(function(a,b){return a+b},0), target=tot*0.75, acc=0, pick=0;
+            for(var k=0;k<durs.length;k++){ if(acc>=target){ pick=k; break; } acc+=durs[k]; }
+            return dec.decode({frameIndex:pick});
+          }).then(function(r){ var f=r.image, out=toJpg(f,f.displayWidth,f.displayHeight); f.close(); dec.close(); return out; });
+        });
+      });
+    }
     return new Promise(function(res,rej){
       var url=URL.createObjectURL(file), img=new Image();
-      img.onload=function(){ var s=Math.min(1,1080/Math.max(img.naturalWidth,img.naturalHeight));
-        var c=document.createElement('canvas'); c.width=Math.round(img.naturalWidth*s); c.height=Math.round(img.naturalHeight*s);
-        c.getContext('2d').drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url);
-        res(c.toDataURL('image/jpeg',0.86).split(',')[1]); };
+      img.onload=function(){ res(toJpg(img,img.naturalWidth,img.naturalHeight)); URL.revokeObjectURL(url); };
       img.onerror=rej; img.src=url;
     });
   }
