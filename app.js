@@ -9,7 +9,6 @@ function lucianStart(C) {
   var won = function (n) { return Number(n).toLocaleString('ko-KR'); };
 
   /* ── 설정 반영 ── */
-  if (C.basePrice) $('#basePrice').textContent = won(C.basePrice);
 
   function drawSlots(el, arr) {
     (arr || []).forEach(function (full) {
@@ -28,7 +27,18 @@ function lucianStart(C) {
   $('#alert').innerHTML = list(C.alert).map(function (t) { return '<p>' + t + '</p>'; }).join('');
   if (!list(C.alert).length) $('#alert').style.display = 'none';
   $('#included').innerHTML = list(C.included).map(function (t) { return '<li>' + t + '</li>'; }).join('');
-  $('#basics').innerHTML = list(C.basics).map(function (t, i) { return '<li><span>' + (i + 1) + '</span>' + t + '</li>'; }).join('');
+  var P = C.pricing || {};
+  var lines = function (t) { return String(t || '').split('\n').map(function (x) { return x.trim(); }).filter(Boolean); };
+  $('#plans').innerHTML = list(P.plans).map(function (p) {
+    var items = lines(p.items);
+    return '<div class="card plan"><p class="card-tag">' + (p.title || '') + '</p>' +
+      '<p class="won"><span>' + (p.price || '') + '</span></p>' +
+      (items.length ? '<ul class="incl">' + items.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul>' : '') +
+      (p.note ? '<p class="plan-note">' + p.note + '</p>' : '') + '</div>';
+  }).join('');
+  $('#addons').innerHTML = list(P.addons).map(function (a) { return '<li><span>' + (a.name || '') + '</span><b>' + (a.price || '') + '</b></li>'; }).join('');
+  if (!list(P.addons).length) $('.addons-card').style.display = 'none';
+  if (!list(C.included).length) $('.common').style.display = 'none';
   $('#steps').innerHTML = list(C.process).map(function (p) { return '<li><b>' + p.title + '</b><span>' + p.text + '</span></li>'; }).join('');
   $('#notices').innerHTML = list(C.notices).map(function (n, i) {
     return '<details' + (i === 0 ? ' open' : '') + '><summary>' + n.title + '</summary>' + paras(n.text) + '</details>';

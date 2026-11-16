@@ -253,3 +253,25 @@ b { font-weight: 700; }
   .won span { font-size: 42px; }
   .works { grid-template-columns: repeat(2, 1fr); gap: 10px; }
 }
+
+/* PRICING (가격 안내) */
+.plans { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.plan { display: flex; flex-direction: column; }
+.plan .won span { font-size: 46px; }
+.plan-note { margin-top: 16px; padding: 14px 16px; border-radius: 14px; background: var(--lav-l); font-size: 14px; color: var(--text); }
+.plan-note b { color: var(--lav-d); }
+.addons-card { margin-top: 20px; }
+.addons { list-style: none; padding: 0; margin: 6px 0 0; }
+.addons li { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 4px; border-bottom: 1px dashed var(--line); }
+.addons li:last-child { border-bottom: 0; }
+.addons li b { color: var(--lav-d); white-space: nowrap; font-weight: 800; }
+.common { margin-top: 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.common-tag { font-size: 13px; font-weight: 700; color: var(--muted); }
+.common .incl { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; justify-content: center; }
+.common .incl li { padding: 5px 14px; border-radius: 999px; background: #fff; border: 1px solid var(--line); font-size: 14px; color: var(--lav-d); }
+.common .incl li::before { content: none; }
+@media (max-width: 860px) {
+  .plans { grid-template-columns: 1fr; }
+  .plan .won span { font-size: 40px; }
+  .addons li { flex-direction: column; align-items: flex-start; gap: 4px; }
+}

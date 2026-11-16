@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 <div class="page">
@@ -122,19 +122,16 @@
   <section class="sec sec-alt" id="price">
     <div class="sec-head">
       <p class="tag">PRICE</p>
-      <h2>가격</h2>
+      <h2>가격 안내</h2>
     </div>
-    <div class="price-grid">
-      <div class="card price-main">
-        <p class="card-tag">기본 가격</p>
-        <p class="won"><span id="basePrice">210,000</span>원</p>
-        <ul class="incl" id="included"></ul>
-        <p class="muted">신청 옵션에 따라 추가금이 붙을 수 있어요.</p>
-      </div>
-      <div class="card">
-        <p class="card-tag">기본적으로 포함되는 사항</p>
-        <ol class="basics" id="basics"></ol>
-      </div>
+    <div class="plans" id="plans"></div>
+    <div class="card addons-card">
+      <p class="card-tag">추가금 요소</p>
+      <ul class="addons" id="addons"></ul>
+    </div>
+    <div class="common">
+      <p class="common-tag">모든 채팅창 공통</p>
+      <ul class="incl" id="included"></ul>
     </div>
   </section>
 
@@ -211,6 +208,6 @@
   <footer class="foot">© Lucian · 채팅창 CSS 주문제작</footer>
 </div>
 
-<script src="app.js?v=5"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>

@@ -42,7 +42,8 @@ textarea{resize:vertical;min-height:60px}
 .dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--lav);background:#fff;cursor:pointer;padding:0}
 .dot.full{background:var(--lav-d);border-color:transparent}
 /* list editor */
-.item{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
+.item{display:flex;gap:8px;align-items:flex-start;margin-bottom:10px}
+.item+.item{border-top:1px dashed var(--line);padding-top:10px}
 .item .f{flex:1;display:flex;flex-direction:column;gap:6px}
 .item .ctl{display:flex;flex-direction:column;gap:4px}
 .item .ctl button{width:32px;height:28px;padding:0;border-radius:8px}
@@ -64,13 +65,28 @@ textarea{resize:vertical;min-height:60px}
 
 <!-- 로그인 -->
 <div class="wrap login" id="loginView">
-  <div class="card">
+  <div class="card" id="pwCard">
     <h1>🔒 루시안 어드민</h1>
-    <p class="hint">GitHub 접근 키(토큰)로 들어가요. 처음 한 번만 넣으면 이 브라우저가 기억해요.</p>
-    <input type="password" id="tokenIn" placeholder="github_pat_ 로 시작하는 키" autocomplete="off">
+    <p class="hint">비밀번호를 입력하세요.</p>
+    <input type="password" id="pwIn" placeholder="비밀번호" autocomplete="current-password">
     <label><input type="checkbox" id="remember" checked> 이 브라우저에서 기억하기</label>
     <button class="btn main" id="loginBtn" style="width:100%">들어가기</button>
     <p class="status" id="loginMsg" style="margin-top:10px"></p>
+    <p class="hint" style="margin:6px 0 0"><a href="#" id="toSetup" style="color:var(--lav-d)">비밀번호 처음 설정하기 / 잊어버렸어요</a></p>
+  </div>
+
+  <div class="card hide" id="setupCard">
+    <h1>🔑 비밀번호 설정</h1>
+    <p class="hint">GitHub 접근 키는 <b>이번 한 번만</b> 넣으면 돼요. 키는 비밀번호로 잠가서 저장하고, 다음부터는 비밀번호만 입력하면 들어가져요.</p>
+    <input type="password" id="tokenIn" placeholder="github_pat_ 로 시작하는 키" autocomplete="off">
+    <div style="height:8px"></div>
+    <input type="password" id="newPw1" placeholder="새 비밀번호 (10자 이상 권장)" autocomplete="new-password">
+    <div style="height:8px"></div>
+    <input type="password" id="newPw2" placeholder="새 비밀번호 한 번 더" autocomplete="new-password">
+    <div style="height:14px"></div>
+    <button class="btn main" id="setupBtn" style="width:100%">설정하고 들어가기</button>
+    <p class="status" id="setupMsg" style="margin-top:10px"></p>
+    <p class="hint" style="margin:6px 0 0"><a href="#" id="toLogin" style="color:var(--lav-d)">← 비밀번호로 들어가기</a></p>
     <details style="margin-top:8px">
       <summary class="hint" style="cursor:pointer;margin:0">키 만드는 법</summary>
       <ol>
@@ -89,7 +105,19 @@ textarea{resize:vertical;min-height:60px}
     <h1>루시안 어드민</h1>
     <span class="sp"></span>
     <a class="btn ghost sm" href="./" target="_blank" style="text-decoration:none">페이지 보기 ↗</a>
+    <button class="btn ghost sm" id="pwChangeBtn">비밀번호 바꾸기</button>
     <button class="btn ghost sm" id="logoutBtn">로그아웃</button>
+  </div>
+
+  <div class="card hide" id="pwChangeCard">
+    <h2>비밀번호 바꾸기</h2>
+    <p class="hint">다른 사람이 알면 안 돼요. 10자 이상, 숫자·영문을 섞어 주세요.</p>
+    <input type="password" id="chPw1" placeholder="새 비밀번호" autocomplete="new-password">
+    <div style="height:8px"></div>
+    <input type="password" id="chPw2" placeholder="새 비밀번호 한 번 더" autocomplete="new-password">
+    <div style="height:12px"></div>
+    <button class="btn main sm" id="chPwBtn">바꾸기</button>
+    <span class="status" id="chPwMsg"></span>
   </div>
 
   <div class="card">
@@ -100,13 +128,14 @@ textarea{resize:vertical;min-height:60px}
   </div>
 
   <div class="card">
-    <h2>가격</h2>
-    <p class="hint">숫자만 입력해 주세요. (예: 210000)</p>
-    <input type="number" class="num" id="basePrice">
-    <h2 style="margin-top:18px">기본 가격 카드 목록</h2>
+    <h2>가격 안내</h2>
+    <p class="hint">가격은 글자 그대로 보여요. (예: 100,000원 / 1종당 20,000원) · 포함 내용은 한 줄에 하나씩 · 굵게: &lt;b&gt;글자&lt;/b&gt;</p>
+    <h2 style="margin-top:14px;font-size:15px">기본 상품 (저챗용 · 게임용 등)</h2>
+    <div id="ed_plans"></div>
+    <h2 style="margin-top:18px;font-size:15px">추가금 요소</h2>
+    <div id="ed_addons"></div>
+    <h2 style="margin-top:18px;font-size:15px">모든 채팅창 공통</h2>
     <div id="ed_included"></div>
-    <h2 style="margin-top:18px">기본적으로 포함되는 사항</h2>
-    <div id="ed_basics"></div>
   </div>
 
   <div class="card">
@@ -168,20 +197,81 @@ textarea{resize:vertical;min-height:60px}
   function setMsg(el,t,cls){ el.textContent=t; el.className='status'+(cls?' '+cls:''); }
   function mark(){ dirty=true; setMsg($('#saveMsg'),'바뀐 내용이 있어요. 「저장」을 눌러 주세요.'); }
 
+  /* ── 비밀번호 잠금 (GitHub 키를 비밀번호로 암호화해 admin-key.json에 저장) ── */
+  var KEYFILE='admin-key.json', ITER=600000;
+  var u8=function(b){return new Uint8Array(b)};
+  var toB64=function(buf){var s='',a=u8(buf);for(var i=0;i<a.length;i++)s+=String.fromCharCode(a[i]);return btoa(s)};
+  var fromB64=function(b){var s=atob(b),a=new Uint8Array(s.length);for(var i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a};
+  function deriveKey(pw,salt,iter){
+    return crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']).then(function(base){
+      return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:iter,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+    });
+  }
+  function lockToken(tok,pw){
+    var salt=crypto.getRandomValues(new Uint8Array(16)), iv=crypto.getRandomValues(new Uint8Array(12));
+    return deriveKey(pw,salt,ITER).then(function(k){ return crypto.subtle.encrypt({name:'AES-GCM',iv:iv},k,new TextEncoder().encode(tok)); })
+      .then(function(ct){ return {v:1,kdf:'PBKDF2-SHA256',iter:ITER,salt:toB64(salt),iv:toB64(iv),data:toB64(ct)}; });
+  }
+  function unlockToken(rec,pw){
+    return deriveKey(pw,fromB64(rec.salt),rec.iter||ITER).then(function(k){ return crypto.subtle.decrypt({name:'AES-GCM',iv:fromB64(rec.iv)},k,fromB64(rec.data)); })
+      .then(function(pt){ return new TextDecoder().decode(pt); });
+  }
+  function saveKeyFile(rec){
+    return gh(KEYFILE+'?ref='+BRANCH+'&t='+Date.now()).then(function(j){return j.sha}).catch(function(){return null})
+      .then(function(old){ return putFile(KEYFILE,b64enc(JSON.stringify(rec,null,2)+'\n'),'어드민 비밀번호 설정',old); });
+  }
+  function showSetup(on){ $('#pwCard').classList.toggle('hide',on); $('#setupCard').classList.toggle('hide',!on); }
+  $('#toSetup').onclick=function(e){ e.preventDefault(); showSetup(true); };
+  $('#toLogin').onclick=function(e){ e.preventDefault(); showSetup(false); };
+
   /* ── 로그인 ── */
-  function login(t){
-    token=t; setMsg($('#loginMsg'),'확인 중…');
+  function enter(t,quiet){
+    token=t; if(!quiet) setMsg($('#loginMsg'),'확인 중…');
     return gh(FILE+'?ref='+BRANCH+'&t='+Date.now()).then(function(j){
       sha=j.sha; data=JSON.parse(b64dec(j.content));
       if($('#remember').checked) store(false,t);
       $('#loginView').classList.add('hide'); $('#editView').classList.remove('hide'); $('#bar').classList.remove('hide');
       renderAll();
-    }).catch(function(e){ setMsg($('#loginMsg'),'들어가지 못했어요. 키를 다시 확인해 주세요. ('+e.message+')','err'); store(false,null); });
+    });
   }
-  $('#loginBtn').onclick=function(){ var t=$('#tokenIn').value.trim(); if(t) login(t); };
-  $('#tokenIn').onkeydown=function(e){ if(e.key==='Enter') $('#loginBtn').click(); };
+  $('#loginBtn').onclick=function(){
+    var pw=$('#pwIn').value; if(!pw) return;
+    var btn=this; btn.disabled=true; setMsg($('#loginMsg'),'확인 중…');
+    fetch('./'+KEYFILE+'?t='+Date.now(),{cache:'no-store'}).then(function(r){ if(!r.ok) throw new Error('nokey'); return r.json(); })
+      .then(function(rec){ return unlockToken(rec,pw); })
+      .then(function(t){ return enter(t,true); })
+      .catch(function(e){
+        if(e.message==='nokey'){ setMsg($('#loginMsg'),'아직 비밀번호가 설정되지 않았어요. 아래 「비밀번호 처음 설정하기」를 눌러 주세요.','err'); }
+        else if(e.name==='OperationError'){ setMsg($('#loginMsg'),'비밀번호가 맞지 않아요.','err'); }
+        else { setMsg($('#loginMsg'),'들어가지 못했어요. ('+e.message+') GitHub 키가 만료됐다면 「잊어버렸어요」에서 다시 설정해 주세요.','err'); }
+      }).then(function(){ btn.disabled=false; });
+  };
+  $('#pwIn').onkeydown=function(e){ if(e.key==='Enter') $('#loginBtn').click(); };
+  $('#setupBtn').onclick=function(){
+    var t=$('#tokenIn').value.trim(), p1=$('#newPw1').value, p2=$('#newPw2').value, msg=$('#setupMsg');
+    if(!t){ setMsg(msg,'GitHub 키를 넣어 주세요.','err'); return; }
+    if(p1.length<6){ setMsg(msg,'비밀번호는 6자 이상으로 해 주세요. (10자 이상 권장)','err'); return; }
+    if(p1!==p2){ setMsg(msg,'두 비밀번호가 달라요.','err'); return; }
+    var btn=this; btn.disabled=true; setMsg(msg,'키 확인 중…');
+    token=t;
+    gh(FILE+'?ref='+BRANCH+'&t='+Date.now())
+      .then(function(){ setMsg(msg,'비밀번호로 잠그는 중…'); return lockToken(t,p1); })
+      .then(saveKeyFile)
+      .then(function(){ setMsg(msg,'설정했어요! 1~2분 뒤부터 다른 기기에서도 비밀번호로 들어갈 수 있어요.','ok'); return enter(t,true); })
+      .catch(function(e){ setMsg(msg,'설정하지 못했어요. 키를 다시 확인해 주세요. ('+e.message+')','err'); })
+      .then(function(){ btn.disabled=false; });
+  };
+  $('#pwChangeBtn').onclick=function(){ $('#pwChangeCard').classList.toggle('hide'); };
+  $('#chPwBtn').onclick=function(){
+    var p1=$('#chPw1').value, p2=$('#chPw2').value, msg=$('#chPwMsg');
+    if(p1.length<6){ setMsg(msg,'6자 이상으로 해 주세요.','err'); return; }
+    if(p1!==p2){ setMsg(msg,'두 비밀번호가 달라요.','err'); return; }
+    var btn=this; btn.disabled=true; setMsg(msg,'바꾸는 중…');
+    lockToken(token,p1).then(saveKeyFile).then(function(){ setMsg(msg,'바꿨어요! 1~2분 뒤부터 새 비밀번호로 들어가요.','ok'); $('#chPw1').value=''; $('#chPw2').value=''; })
+      .catch(function(e){ setMsg(msg,'바꾸지 못했어요. ('+e.message+')','err'); }).then(function(){ btn.disabled=false; });
+  };
   $('#logoutBtn').onclick=function(){ store(false,null); location.reload(); };
-  var saved=store(true); if(saved) login(saved);
+  var saved=store(true); if(saved) enter(saved,true).catch(function(){ store(false,null); });
 
   /* ── 슬롯 ── */
   function renderSlots(){
@@ -199,33 +289,34 @@ textarea{resize:vertical;min-height:60px}
   });
 
   /* ── 목록 편집기 (글 / 제목+내용) ── */
-  function listEditor(id,key,fields,blank){
+  function listEditor(id,key,fields,blank,obj){
+    obj=obj||data;
     var root=$(id);
     function draw(){
       root.innerHTML='';
-      data[key].forEach(function(it,i){
+      obj[key].forEach(function(it,i){
         var row=document.createElement('div'); row.className='item';
         var f=document.createElement('div'); f.className='f';
         if(!fields){
           var inp=document.createElement('input'); inp.type='text'; inp.value=it;
-          inp.oninput=function(){ data[key][i]=inp.value; mark(); }; f.appendChild(inp);
+          inp.oninput=function(){ obj[key][i]=inp.value; mark(); }; f.appendChild(inp);
         } else fields.forEach(function(fd){
           var el=document.createElement(fd.multi?'textarea':'input'); if(!fd.multi) el.type='text';
           el.placeholder=fd.label; el.value=it[fd.k]||'';
-          el.oninput=function(){ data[key][i][fd.k]=el.value; mark(); }; f.appendChild(el);
+          el.oninput=function(){ obj[key][i][fd.k]=el.value; mark(); }; f.appendChild(el);
         });
         var c=document.createElement('div'); c.className='ctl';
         [['↑',-1],['↓',1]].forEach(function(p){ var b=document.createElement('button'); b.className='btn sm ghost'; b.textContent=p[0];
-          b.onclick=function(){ var j=i+p[1]; if(j<0||j>=data[key].length) return; var t=data[key][i]; data[key][i]=data[key][j]; data[key][j]=t; draw(); mark(); }; c.appendChild(b); });
+          b.onclick=function(){ var j=i+p[1]; if(j<0||j>=obj[key].length) return; var t=obj[key][i]; obj[key][i]=obj[key][j]; obj[key][j]=t; draw(); mark(); }; c.appendChild(b); });
         var d=document.createElement('button'); d.className='btn sm del'; d.textContent='✕';
-        d.onclick=function(){ if(confirm('이 항목을 지울까요?')){ data[key].splice(i,1); draw(); mark(); } }; c.appendChild(d);
+        d.onclick=function(){ if(confirm('이 항목을 지울까요?')){ obj[key].splice(i,1); draw(); mark(); } }; c.appendChild(d);
         row.appendChild(f); row.appendChild(c); root.appendChild(row);
       });
       var add=document.createElement('button'); add.className='btn sm'; add.textContent='＋ 항목 추가';
-      add.onclick=function(){ data[key].push(JSON.parse(JSON.stringify(blank))); draw(); mark(); };
+      add.onclick=function(){ obj[key].push(JSON.parse(JSON.stringify(blank))); draw(); mark(); };
       root.appendChild(add);
     }
-    if(!Array.isArray(data[key])) data[key]=[];
+    if(!Array.isArray(obj[key])) obj[key]=[];
     draw();
   }
 
@@ -290,9 +381,10 @@ textarea{resize:vertical;min-height:60px}
   function renderAll(){
     data.slots=data.slots||{normal:[],fast:[]}; data.works=data.works||[];
     renderSlots();
-    $('#basePrice').value=data.basePrice||''; $('#basePrice').oninput=function(){ data.basePrice=Number($('#basePrice').value)||0; mark(); };
+    data.pricing=data.pricing||{plans:[],addons:[]};
+    listEditor('#ed_plans','plans',[{k:'title',label:'상품 이름 (예: 저챗용 채팅창)'},{k:'price',label:'가격 (예: 100,000원)'},{k:'items',label:'포함 내용 (한 줄에 하나씩)',multi:true},{k:'note',label:'아래 안내 문구 (선택)'}],{title:'',price:'',items:'',note:''},data.pricing);
+    listEditor('#ed_addons','addons',[{k:'name',label:'추가 요소'},{k:'price',label:'가격 (예: 30,000원)'}],{name:'',price:''},data.pricing);
     listEditor('#ed_included','included',null,'');
-    listEditor('#ed_basics','basics',null,'');
     listEditor('#ed_alert','alert',null,'');
     listEditor('#ed_process','process',[{k:'title',label:'제목'},{k:'text',label:'내용',multi:true}],{title:'',text:''});
     listEditor('#ed_notices','notices',[{k:'title',label:'제목'},{k:'text',label:'내용',multi:true}],{title:'',text:''});
