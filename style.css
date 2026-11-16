@@ -275,3 +275,8 @@ b { font-weight: 700; }
   .plan .won span { font-size: 40px; }
   .addons li { flex-direction: column; align-items: flex-start; gap: 4px; }
 }
+
+/* 작업물 분류 (저챗용 / 게임용) */
+.work-group + .work-group { margin-top: 56px; }
+.work-title { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 0 22px; font-size: 20px; font-weight: 800; color: var(--text); }
+.work-title::before, .work-title::after { content: ''; width: 40px; height: 2px; border-radius: 2px; background: var(--lav); }

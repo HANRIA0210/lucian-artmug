@@ -44,57 +44,56 @@ function lucianStart(C) {
     return '<details' + (i === 0 ? ' open' : '') + '><summary>' + n.title + '</summary>' + paras(n.text) + '</details>';
   }).join('');
 
-  var works = $('#worksList');
-  if (C.works && C.works.length) {
-    C.works.forEach(function (w) {
+  /* ── 작업물 (저챗용 / 게임용) ── */
+  var setOrigin = function (f) {
+    var wr = f.parentNode.getBoundingClientRect(), r = f.getBoundingClientRect();
+    var cx = (r.left + r.width / 2 - wr.left) / wr.width, cy = (r.top + r.height / 2 - wr.top) / wr.height;
+    var ox = cx < 0.34 ? 'left' : cx > 0.66 ? 'right' : 'center';
+    var oy = cy < 0.34 ? 'top' : cy > 0.66 ? 'bottom' : 'center';
+    f.style.transformOrigin = ox + ' ' + oy;
+  };
+  var close = function (f) {
+    f.classList.remove('on');
+    if (f.__gif) { f.__gif.el.classList.remove('ready'); f.__gif.el.removeAttribute('src'); }
+  };
+  var open = function (f) {
+    if (f.classList.contains('on')) return;
+    $$('.works figure.on').forEach(close);
+    setOrigin(f);
+    f.classList.add('on');
+    var g = f.__gif;
+    if (g) {
+      g.el.classList.remove('ready');
+      g.el.src = '';
+      g.el.src = g.src;   // 처음부터 재생
+      if (g.el.complete && g.el.naturalWidth) g.el.classList.add('ready');
+    }
+  };
+  function renderWorks(box, items) {
+    if (!box) return;
+    if (!items.length) { box.innerHTML = '<div class="empty">작업물을 준비하고 있어요.</div>'; return; }
+    items.forEach(function (w) {
       var f = document.createElement('figure');
-      var box = document.createElement('div');
-      box.className = 'work-box';
+      var wb = document.createElement('div');
+      wb.className = 'work-box';
       var img = document.createElement('img');
       img.src = w.src; img.alt = w.title || '작업물';
       img.addEventListener('load', postHeight);
-      box.appendChild(img);
+      wb.appendChild(img);
       if (w.gif) {
         var anim = document.createElement('img');
         anim.className = 'work-gif'; anim.alt = '';
         anim.addEventListener('load', function () { if (f.classList.contains('on')) anim.classList.add('ready'); });
-        box.appendChild(anim);
+        wb.appendChild(anim);
         var hint = document.createElement('span');
         hint.className = 'work-play'; hint.textContent = '▶';
-        box.appendChild(hint);
+        wb.appendChild(hint);
         f.__gif = { el: anim, src: w.gif };
       }
-      f.appendChild(box);
+      f.appendChild(wb);
       if (w.title) { var c = document.createElement('figcaption'); c.textContent = w.title; f.appendChild(c); }
-      works.appendChild(f);
-    });
-
-    /* 마우스를 올리면(모바일은 터치) 크게 + GIF 재생 */
-    var setOrigin = function (f) {
-      var wr = works.getBoundingClientRect(), r = f.getBoundingClientRect();
-      var cx = (r.left + r.width / 2 - wr.left) / wr.width, cy = (r.top + r.height / 2 - wr.top) / wr.height;
-      var ox = cx < 0.34 ? 'left' : cx > 0.66 ? 'right' : 'center';
-      var oy = cy < 0.34 ? 'top' : cy > 0.66 ? 'bottom' : 'center';
-      f.style.transformOrigin = ox + ' ' + oy;
-    };
-    var open = function (f) {
-      if (f.classList.contains('on')) return;
-      $$('figure.on', works).forEach(close);
-      setOrigin(f);
-      f.classList.add('on');
-      var g = f.__gif;
-      if (g) {
-        g.el.classList.remove('ready');
-        g.el.src = '';
-        g.el.src = g.src;   // 처음부터 재생
-        if (g.el.complete && g.el.naturalWidth) g.el.classList.add('ready');
-      }
-    };
-    var close = function (f) {
-      f.classList.remove('on');
-      if (f.__gif) { f.__gif.el.classList.remove('ready'); f.__gif.el.removeAttribute('src'); }
-    };
-    $$('figure', works).forEach(function (f) {
+      box.appendChild(f);
+      /* 마우스를 올리면(모바일은 터치) 크게 + GIF 재생 */
       var lastType = 'mouse';
       f.addEventListener('pointerdown', function (e) { lastType = e.pointerType; });
       f.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') open(f); });
@@ -104,9 +103,10 @@ function lucianStart(C) {
         f.classList.contains('on') ? close(f) : open(f);
       });
     });
-  } else {
-    works.innerHTML = '<div class="empty">작업물을 준비하고 있어요.</div>';
   }
+  var allWorks = Array.isArray(C.works) ? C.works : [];
+  renderWorks($('#worksChat'), allWorks.filter(function (w) { return (w.cat || 'chat') === 'chat'; }));
+  renderWorks($('#worksGame'), allWorks.filter(function (w) { return w.cat === 'game'; }));
 
   /* ── 옵션 / 미리보기 ── */
   var state = {

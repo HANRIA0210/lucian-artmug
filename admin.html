@@ -48,11 +48,13 @@ textarea{resize:vertical;min-height:60px}
 .item .ctl{display:flex;flex-direction:column;gap:4px}
 .item .ctl button{width:32px;height:28px;padding:0;border-radius:8px}
 /* works */
-.works{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.works{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
 .w{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
 .w img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;background:var(--bg)}
-.w .r{display:flex;gap:4px;padding:6px;justify-content:space-between;align-items:center}
+.w .r{display:flex;flex-wrap:wrap;gap:4px;padding:6px;justify-content:space-between;align-items:center}
 .w .tag{font-size:11px;color:var(--muted)}
+.wgroup{font-size:14px;margin:16px 0 8px;color:var(--lav-d)}
+.wgroup:first-child{margin-top:0}
 .add{border:2px dashed var(--lav);border-radius:14px;padding:16px;margin-top:14px;background:#FBFAFF}
 .add .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:8px 0}
 .add .row label{font-size:13px;color:var(--muted);min-width:150px}
@@ -157,10 +159,11 @@ textarea{resize:vertical;min-height:60px}
 
   <div class="card">
     <h2>작업물</h2>
-    <p class="hint">위(왼쪽)부터 순서대로 보여요. 화살표로 순서를 바꿀 수 있어요.</p>
-    <div class="works" id="worksEd"></div>
+    <p class="hint">저챗용 / 게임용으로 나눠서 보여요. 화살표로 순서를, 「저챗↔게임」 버튼으로 분류를 바꿀 수 있어요.</p>
+    <div id="worksEd"></div>
     <div class="add">
       <b>작업물 추가</b>
+      <div class="row"><label>분류</label><select id="addCat" style="padding:8px 12px;border:1px solid var(--line);border-radius:10px;font:inherit"><option value="chat">저챗용 채팅창</option><option value="game">게임용 채팅창</option></select></div>
       <div class="row"><label>움직이는 GIF (마우스 올렸을 때)</label><input type="file" id="addGif" accept="image/gif"></div>
       <div class="row"><label>정지 이미지 (선택 · 없으면 GIF에서 자동으로 만들어요)</label><input type="file" id="addImg" accept="image/png,image/jpeg,image/webp"></div>
       <button class="btn main sm" id="addBtn">업로드하고 목록에 추가</button>
@@ -323,15 +326,25 @@ textarea{resize:vertical;min-height:60px}
   /* ── 작업물 ── */
   function renderWorks(){
     var root=$('#worksEd'); root.innerHTML='';
-    data.works.forEach(function(w,i){
-      var el=document.createElement('div'); el.className='w';
-      el.innerHTML='<img src="./'+esc(w.src)+'" alt=""><div class="r"><span class="tag">'+(i+1)+(w.gif?' · GIF':'')+'</span><span></span></div>';
-      var ctl=el.querySelector('.r span:last-child');
-      [['←',-1],['→',1]].forEach(function(p){ var b=document.createElement('button'); b.className='btn sm ghost'; b.textContent=p[0];
-        b.onclick=function(){ var j=i+p[1]; if(j<0||j>=data.works.length) return; var t=data.works[i]; data.works[i]=data.works[j]; data.works[j]=t; renderWorks(); mark(); }; ctl.appendChild(b); });
-      var d=document.createElement('button'); d.className='btn sm del'; d.textContent='✕';
-      d.onclick=function(){ if(confirm((i+1)+'번 작업물을 목록에서 뺄까요?')){ data.works.splice(i,1); renderWorks(); mark(); } };
-      ctl.appendChild(d); root.appendChild(el);
+    var catOf=function(w){ return w.cat==='game'?'game':'chat'; };
+    [['chat','저챗용 채팅창'],['game','게임용 채팅창']].forEach(function(g){
+      var h=document.createElement('h3'); h.className='wgroup'; h.textContent=g[1]; root.appendChild(h);
+      var grid=document.createElement('div'); grid.className='works'; root.appendChild(grid);
+      var idx=[]; data.works.forEach(function(w,i){ if(catOf(w)===g[0]) idx.push(i); });
+      if(!idx.length){ var e=document.createElement('p'); e.className='hint'; e.textContent='아직 없어요.'; grid.appendChild(e); }
+      idx.forEach(function(i,n){
+        var w=data.works[i];
+        var el=document.createElement('div'); el.className='w';
+        el.innerHTML='<img src="./'+esc(w.src)+'" alt=""><div class="r"><span class="tag">'+(n+1)+(w.gif?' · GIF':'')+'</span><span></span></div>';
+        var ctl=el.querySelector('.r span:last-child');
+        [['←',-1],['→',1]].forEach(function(p){ var b=document.createElement('button'); b.className='btn sm ghost'; b.textContent=p[0];
+          b.onclick=function(){ var m=n+p[1]; if(m<0||m>=idx.length) return; var j=idx[m], t=data.works[i]; data.works[i]=data.works[j]; data.works[j]=t; renderWorks(); mark(); }; ctl.appendChild(b); });
+        var sw=document.createElement('button'); sw.className='btn sm ghost'; sw.textContent=g[0]==='chat'?'→게임':'→저챗'; sw.title='분류 바꾸기';
+        sw.onclick=function(){ data.works[i].cat=g[0]==='chat'?'game':'chat'; renderWorks(); mark(); }; ctl.appendChild(sw);
+        var d=document.createElement('button'); d.className='btn sm del'; d.textContent='✕';
+        d.onclick=function(){ if(confirm(g[1]+' '+(n+1)+'번 작업물을 목록에서 뺄까요?')){ data.works.splice(i,1); renderWorks(); mark(); } };
+        ctl.appendChild(d); grid.appendChild(el);
+      });
     });
   }
   function fileB64(file){ return new Promise(function(res,rej){ var r=new FileReader(); r.onload=function(){res(String(r.result).split(',')[1])}; r.onerror=rej; r.readAsDataURL(file); }); }
@@ -362,7 +375,7 @@ textarea{resize:vertical;min-height:60px}
   $('#addBtn').onclick=function(){
     var gif=$('#addGif').files[0], still=$('#addImg').files[0], msg=$('#addMsg');
     if(!gif && !still){ setMsg(msg,'파일을 골라 주세요.','err'); return; }
-    var stamp=Date.now(), base='works/w'+stamp, item={}, btn=this; btn.disabled=true;
+    var stamp=Date.now(), base='works/w'+stamp, item={cat:$('#addCat').value}, btn=this; btn.disabled=true;
     setMsg(msg,'업로드 중… (GIF는 조금 걸릴 수 있어요)');
     var jobs=Promise.resolve();
     if(gif) jobs=jobs.then(function(){ return fileB64(gif); }).then(function(b){ return putFile(base+'.gif',b,'작업물 GIF 추가'); }).then(function(){ item.gif=base+'.gif'; });
@@ -373,7 +386,7 @@ textarea{resize:vertical;min-height:60px}
     jobs.then(function(){
       data.works.push(item); renderWorks(); mark();
       $('#addGif').value=''; $('#addImg').value='';
-      setMsg(msg,'올렸어요! 맨 끝에 추가됐어요. 「저장」을 눌러야 페이지에 나와요.','ok');
+      setMsg(msg,'올렸어요! '+(item.cat==='game'?'게임용':'저챗용')+' 맨 끝에 추가됐어요. 「저장」을 눌러야 페이지에 나와요.','ok');
     }).catch(function(e){ setMsg(msg,'업로드 실패: '+e.message,'err'); }).then(function(){ btn.disabled=false; });
   };
 
